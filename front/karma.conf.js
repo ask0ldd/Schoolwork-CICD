@@ -31,6 +31,7 @@ module.exports = function (config) {
         { type: 'html' },
         { type: 'text-summary' },
         { type: 'lcov'},
+        { type: 'json-summary'},
       ],
       /*coverageReporter: {
         type: 'lcov',

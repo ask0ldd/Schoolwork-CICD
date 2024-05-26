@@ -21,10 +21,10 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: latest
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run Angular tests
         run: npm run test:ci
@@ -32,14 +32,15 @@ jobs:
       - name: Run Angular coverage
         run: npm run coverage:ci
 
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./front/coverage/bobapp/lcov.info
+      # - name: Coveralls GitHub Action
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     path-to-lcov: ./front/coverage/bobapp/lcov.info
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: ./front/coverage/bobapp/lcov.info
+          path: ./front/coverage/bobapp/lcov-report
+          # path: ./front/coverage/bobapp/lcov.info
