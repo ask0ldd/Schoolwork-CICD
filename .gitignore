@@ -5,7 +5,9 @@ target/
 !**/src/test/**/target/
 node_modules/
 dist/
-coverage/
+coverage
+front/.scannerwork
+.scannerwork
 
 ### STS ###
 .apt_generated
