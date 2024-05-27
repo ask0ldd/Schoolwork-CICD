@@ -41,3 +41,5 @@ build/
 .mvn
 
 .angular
+
+sonar.bat
