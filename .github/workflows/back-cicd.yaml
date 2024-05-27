@@ -35,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-reports
-          path: target/surefire-reports
+          path: ./back/target/surefire-reports
