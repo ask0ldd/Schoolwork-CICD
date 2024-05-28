@@ -53,10 +53,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
-          projectBaseDir: ./front
+          #projectBaseDir: ./front
           args: >
             -Dsonar.projectKey=ask0ldd_p10cicdfront
             -Dsonar.organization=ask0ldd
-            -Dsonar.sources=/src
-            -Dsonar.javascript.lcov.reportPaths=/coverage/bobapp/lcov.info
-            -Dsonar.exclusions=/.angular/**,/node_modules/**,/coverage/**,/src/environments/**,.git,.github,back/**,**/*.spec.ts,**/*.conf.js
+            -Dsonar.sources=./front/src
+            -Dsonar.javascript.lcov.reportPaths=./front/coverage/bobapp/lcov.info
+            -Dsonar.exclusions=front/.angular/**,front/node_modules/**,front/coverage/**,front/src/environments/**,.git,.github,back/**,**/*.spec.ts,**/*.conf.js
