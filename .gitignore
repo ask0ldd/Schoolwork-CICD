@@ -43,3 +43,4 @@ build/
 .angular
 
 sonar.bat
+examples
