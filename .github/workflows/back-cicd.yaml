@@ -44,7 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
-          projectBaseDir: ./back
+          # projectBaseDir: ./back
           args: >
             -Dsonar.projectKey=ask0ldd_p10cicdback
             -Dsonar.organization=ask0ldd
