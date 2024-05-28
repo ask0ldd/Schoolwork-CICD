@@ -59,4 +59,4 @@ jobs:
             -Dsonar.organization=ask0ldd
             -Dsonar.sources=./front/src
             -Dsonar.javascript.lcov.reportPaths=./front/coverage/bobapp/lcov.info
-            -Dsonar.exclusions=front/.angular/**,front/node_modules/**,front/coverage/**,front/src/environments/**,.git,.github,back/**,**/*.spec.ts,**/*.conf.js
+            -Dsonar.exclusions=front/.angular/**,front/node_modules/**,front/coverage/**,front/src/environments/**,.git,.github,back/**,**/*.spec.ts,**/*.conf.js,front/src/test.ts,front/src/main.ts
