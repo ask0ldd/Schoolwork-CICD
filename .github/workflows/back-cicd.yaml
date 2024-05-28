@@ -36,3 +36,19 @@ jobs:
         with:
           name: test-reports
           path: ./back/target/surefire-reports
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACK }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: ./back
+          args: >
+            -Dsonar.projectKey=ask0ldd_p10cicdback
+            -Dsonar.organization=ask0ldd
+            -Dsonar.sources=./back/src/main/java
+            -Dsonar.java.binaries=./back/target/classes/com/openclassrooms/bobapp
+            -Dsonar.coverage.jacoco.xmlReportPaths=./back/target/site/jacoco/jacoco.xml
+            -Dsonar.exclusions=front/.angular/**,front/node_modules/**,front/coverage/**,front/src/environments/**,.git,.github,back/target/**,back/src/test/**,**/*.spec.ts,**/*.conf.js
