@@ -38,7 +38,7 @@ jobs:
       #   with:
       #     github-token: ${{ secrets.GITHUB_TOKEN }}
       #     path-to-lcov: ./front/coverage/bobapp/lcov.info
-
+      
       - name: Upload coverage reports
           #if: success() || failure()
           uses: actions/upload-artifact@v4
