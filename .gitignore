@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 node_modules/
 dist/
+front/dist/
 coverage
 front/.scannerwork
 .scannerwork

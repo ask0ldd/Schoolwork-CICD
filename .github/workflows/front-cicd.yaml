@@ -69,6 +69,7 @@ jobs:
           docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
 
       - name: Build and Push Docker Image
+        working-directory: ./front
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
