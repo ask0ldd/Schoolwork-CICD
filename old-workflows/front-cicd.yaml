@@ -1,0 +1,77 @@
+name: Angular Front CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: "./front"
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          #node-version: latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Angular tests
+        run: npm run test:ci
+
+      - name: Run Angular coverage
+        run: npm run coverage:ci
+
+      - name:
+          Upload coverage reports
+          #if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./front/coverage/bobapp/lcov-report
+          # path: ./front/coverage/bobapp/lcov.info
+
+      - name: Build Angular
+        run: npm run build --prod
+        working-directory: ./front
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          #projectBaseDir: ./front
+          args: >
+            -Dsonar.projectKey=ask0ldd_p10cicdfront
+            -Dsonar.organization=ask0ldd
+            -Dsonar.sources=./front/src
+            -Dsonar.javascript.lcov.reportPaths=./front/coverage/bobapp/lcov.info
+            -Dsonar.exclusions=front/.angular/**,front/node_modules/**,front/coverage/**,front/src/environments/**,.git,.github,back/**,**/*.spec.ts,**/*.conf.js,front/src/test.ts,front/src/main.ts
+
+      - name: Docker Login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
+
+      - name: Build and Push Docker Image
+        working-directory: ./front
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker build -t $DOCKER_USERNAME/bobappfront:latest .
+          docker push $DOCKER_USERNAME/bobappfront:latest
