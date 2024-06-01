@@ -9,7 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: "./front"
@@ -22,7 +21,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          #node-version: latest
 
       - name: Install dependencies
         run: npm ci
@@ -40,12 +38,21 @@ jobs:
         with:
           name: coverage-report
           path: ./front/coverage/bobapp/lcov-report
-          # path: ./front/coverage/bobapp/lcov.info
 
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
       - name: Build Angular
         run: npm run build --prod
         working-directory: ./front
 
+  sonar:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
@@ -61,6 +68,11 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=./front/coverage/bobapp/lcov.info
             -Dsonar.exclusions=front/.angular/**,front/node_modules/**,front/coverage/**,front/src/environments/**,.git,.github,back/**,**/*.spec.ts,**/*.conf.js,front/src/test.ts,front/src/main.ts
 
+  docker:
+    runs-on: ubuntu-latest
+    needs: sonar
+
+    steps:
       - name: Docker Login
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
