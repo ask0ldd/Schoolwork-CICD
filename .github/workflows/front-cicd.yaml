@@ -28,14 +28,14 @@ jobs:
         working-directory: "./front"
 
     steps:
-      # ETAPE 1 : CHECKOUT (utilisation de l'action actions/checkout@v4)
+      # ETAPE 1 : CHECKOUT (utilisation de l'action actions/checkout@v4)
       # i.e : cloning du repository, fetching du dernier commit, authentification git, ...
       - name: Check out repository code
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
 
-      # ETAPE 2 : INSTALLATION DE NODE JS
+      # ETAPE 2 : INSTALLATION DE NODE JS
       # installe node.js sur le container actif
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -45,28 +45,28 @@ jobs:
           cache: "npm"
           cache-dependency-path: "./front/package-lock.json"
 
-      # ETAPE 3 : INSTALLATION DES DEPENDANCES DU PROJET
+      # ETAPE 3 : INSTALLATION DES DEPENDANCES DU PROJET
       - name: Install dependencies
         run: npm ci
 
-      # ETAPE 4 : EXECUTION DES TESTS & GENERATION DU COVERAGE
+      # ETAPE 4 : EXECUTION DES TESTS & GENERATION DU COVERAGE
       - name: Run Angular tests & generate coverage
         run: |
           npm run test:ci
           npm run coverage:ci
 
-      # ETAPE 6 : GENERATION & UPLOAD D’UN ARTEFACT CONTENANT CES DONNEES
+      # ETAPE 6 : GENERATION & UPLOAD D’UN ARTEFACT CONTENANT CES DONNEES
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report-${{ matrix.node-version }}
           path: ./front/coverage/bobapp/lcov-report
 
-      # ETAPE 7 : BUILD DU FRONTEND ANGULAR DE L’APPLICATION
+      # ETAPE 7 : BUILD DU FRONTEND ANGULAR DE L’APPLICATION
       - name: Build Angular Frontend
         run: npm run build --prod
 
-      # ETAPE 8 : ANALYSE DE LA QUALITE DU CODE VIA SONARCLOUD
+      # ETAPE 8 : ANALYSE DE LA QUALITE DU CODE VIA SONARCLOUD
       - name: SonarCloud Frontend Scan
         # étape uniquement exécutée pour le container contenant node 20
         if: ${{ matrix.node-version == '20.x' }}
@@ -94,7 +94,7 @@ jobs:
       #- name: List workspace contents
       #  run: ls -R ${{ github.workspace }}
 
-      # ETAPE 9 : BUILD & UPLOAD DE L’IMAGE DOCKER VERS DOCKERHUB
+      # ETAPE 9 : BUILD & UPLOAD DE L’IMAGE DOCKER VERS DOCKERHUB
       - name: Docker Image Build & Push to DockerHub
         if: ${{ matrix.node-version == '20.x' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
         env:
@@ -105,7 +105,7 @@ jobs:
           docker build -t $DOCKER_USERNAME/bobappfront:latest .
           docker push $DOCKER_USERNAME/bobappfront:latest
 
-      # ETAPE 10 : ATTENDS QUE DEUX COMMENTAIRES AIENT ETE ASSOCIES A LA PULL REQUEST
+      # ETAPE 10 : ATTENDS QUE DEUX COMMENTAIRES AIENT ETE ASSOCIES A LA PULL REQUEST
       - name: Wait for two comments
         if: ${{ github.event_name == 'pull_request' && matrix.node-version == '20.x' }}
         env:
@@ -121,7 +121,7 @@ jobs:
             sleep 10
           done
 
-      # ETAPE 11 : RECUPERATION DE CES COMMENTAIRES CONTENANT LES STATS SONARQUBE
+      # ETAPE 11 : RECUPERATION DE CES COMMENTAIRES CONTENANT LES STATS SONARQUBE
       - name: Fetch PR comments
         if: ${{ github.event_name == 'pull_request' && matrix.node-version == '20.x' }}
         env:
@@ -131,7 +131,7 @@ jobs:
           comments=$(gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments --jq '.[].body')
           echo "$comments" > $GITHUB_WORKSPACE/sonar-reports.md
 
-      # ETAPE 12 : UPLOAD DE CES STATS SOUS LA FORME D'UN ARTEFACT
+      # ETAPE 12 : UPLOAD DE CES STATS SOUS LA FORME D'UN ARTEFACT
       - name: Upload comments as artifact
         if: ${{ github.event_name == 'pull_request' && matrix.node-version == '20.x' }}
         uses: actions/upload-artifact@v4
